@@ -1,0 +1,106 @@
+version: '3'
+services:
+
+  rabbitmq:
+    image: rabbitmq:3.10.7-management
+    hostname: rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=mypass
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - app-network
+
+  #MySQL database for tweets
+  dbtweet:
+    platform: linux/amd64
+    image: mysql
+    container_name: dbtweet
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    tty: true
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: tweetdatabase
+      MYSQL_ROOT_PASSWORD: MySecurePass
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    #    volumes:
+    #      #      - Create an empty db
+    #      - ./init:/docker-entrypoint-initdb.d
+    #      #      - feed the db with data in db folder
+    #      - dbdata:/var/lib/mysql
+    #      #      - db config
+    #      # - ./local/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+  #MySQL database for users
+  dbuser:
+    platform: linux/amd64
+    image: mysql
+    container_name: dbuser
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    tty: true
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: userdatabase
+      MYSQL_ROOT_PASSWORD: MySecurePass
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    #    volumes:
+    #      #      - Create an empty db
+    #      - ./init:/docker-entrypoint-initdb.d
+    #      #      - feed the db with data in db folder
+    #      - dbdata:/var/lib/mysql
+    #      #      - db config
+    #      # - ./local/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+
+  #Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: tweetapi
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8081:8081"
+    environment:
+      SERVICE_TAGS: dev
+      SERVICE_NAME: backend
+    volumes:
+      - ./:/app
+    networks:
+      - app-network
+
+  #Backend Service for userApi
+  backend_user:
+    build:
+      context: ../userapi
+      dockerfile: ./Dockerfile
+    container_name: userapi
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8080:8080"
+    environment:
+      SERVICE_TAGS: dev
+      SERVICE_NAME: backenduser
+    volumes:
+      - ../userapi/:/app
+    networks:
+      - app-network
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
