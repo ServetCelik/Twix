@@ -1,14 +1,18 @@
 package com.twix.tweetapi.controller;
 
 import com.twix.tweetapi.controller.modals.CreateTweetRequest;
+import com.twix.tweetapi.controller.modals.UserSharable;
 import com.twix.tweetapi.service.TweetService;
 import com.twix.tweetapi.service.modals.TweetModal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tweet")
@@ -16,6 +20,8 @@ import java.util.List;
 @CrossOrigin("http://localhost:3000")
 public class TweetController {
     private final TweetService tweetService;
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     @GetMapping("/")
@@ -32,8 +38,12 @@ public class TweetController {
 
     @PostMapping("/")
     public ResponseEntity<Long> newTweet(@RequestBody CreateTweetRequest tweetRequest) {
+        Optional<UserSharable> user = Optional.ofNullable(restTemplate.getForObject("http://localhost:8082/user/" + tweetRequest.getUserName(), UserSharable.class));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(tweetService.newTweet(tweetRequest));
+        if (user.isPresent()){
+            return ResponseEntity.status(HttpStatus.CREATED).body(tweetService.newTweet(tweetRequest));
+        }
+        return ResponseEntity.badRequest().body(-1L);
     }
 
     @DeleteMapping("/{id}")
