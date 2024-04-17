@@ -29,13 +29,6 @@ services:
       MYSQL_ROOT_PASSWORD: MySecurePass
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
-    #    volumes:
-    #      #      - Create an empty db
-    #      - ./init:/docker-entrypoint-initdb.d
-    #      #      - feed the db with data in db folder
-    #      - dbdata:/var/lib/mysql
-    #      #      - db config
-    #      # - ./local/mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - app-network
 
@@ -54,23 +47,16 @@ services:
       MYSQL_ROOT_PASSWORD: MySecurePass
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
-    #    volumes:
-    #      #      - Create an empty db
-    #      - ./init:/docker-entrypoint-initdb.d
-    #      #      - feed the db with data in db folder
-    #      - dbdata:/var/lib/mysql
-    #      #      - db config
-    #      # - ./local/mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - app-network
 
 
-  #Backend Service
-  backend:
+  #Backend Service for tweetApi
+  tweet-api:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: tweetapi
+    container_name: tweet-api
     restart: unless-stopped
     tty: true
     ports:
@@ -84,20 +70,54 @@ services:
       - app-network
 
   #Backend Service for userApi
-  backend_user:
+  user-api:
     build:
       context: ../userapi
       dockerfile: ./Dockerfile
-    container_name: userapi
+    container_name: user-api
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8082:8082"
+    environment:
+      SERVICE_TAGS: dev
+      SERVICE_NAME: backenduser
+    volumes:
+      - ../userapi/:/app
+    networks:
+      - app-network
+
+  gateway:
+    build:
+      context: ../cloud-gateway
+      dockerfile: ./Dockerfile
+    container_name: cloud-gateway
     restart: unless-stopped
     tty: true
     ports:
       - "8080:8080"
     environment:
       SERVICE_TAGS: dev
-      SERVICE_NAME: backenduser
+      SERVICE_NAME: cloud-gateway
     volumes:
-      - ../userapi/:/app
+      - ../cloud-gateway/:/app
+    networks:
+      - app-network
+
+  eurekaserver:
+    build:
+      context: ../service-registry
+      dockerfile: ./Dockerfile
+    container_name: service-registry
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8761:8761"
+    environment:
+      SERVICE_TAGS: dev
+      SERVICE_NAME: service-registry
+    volumes:
+      - ../service-registry/:/app
     networks:
       - app-network
 #Docker Networks
