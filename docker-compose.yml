@@ -64,6 +64,25 @@ services:
     environment:
       SERVICE_TAGS: dev
       SERVICE_NAME: backend
+      SPRING_APPLICATION_NAME: tweet-api
+      SERVER_PORT: 8081
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: user
+      SPRING_RABBITMQ_PASSWORD: mypass
+      RABBITMQ_EXCHANGE: user_exchange
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_DATASOURCE_URL: jdbc:mysql://dbtweet:3306/tweetdatabase
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: MySecurePass
+      SPRING_JPA_OPEN_IN_VIEW: false
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_CONNECTION_AUTOCOMMIT: false
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: true
+      EUREKA_CLIENT_FETCH_REGISTRY: true
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: true
     volumes:
       - ./:/app
     networks:
@@ -82,27 +101,46 @@ services:
     environment:
       SERVICE_TAGS: dev
       SERVICE_NAME: backenduser
+      SPRING_APPLICATION_NAME: user-api
+      SERVER_PORT: 8082
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: user
+      SPRING_RABBITMQ_PASSWORD: mypass
+      RABBITMQ_EXCHANGE: user_exchange
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_DATASOURCE_URL: jdbc:mysql://dbuser:3306/userdatabase
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: MySecurePass
+      SPRING_JPA_OPEN_IN_VIEW: false
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_CONNECTION_AUTOCOMMIT: false
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: true
+      EUREKA_CLIENT_FETCH_REGISTRY: true
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: true
     volumes:
       - ../userapi/:/app
     networks:
       - app-network
 
-  gateway:
-    build:
-      context: ../cloud-gateway
-      dockerfile: ./Dockerfile
-    container_name: cloud-gateway
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "8080:8080"
-    environment:
-      SERVICE_TAGS: dev
-      SERVICE_NAME: cloud-gateway
-    volumes:
-      - ../cloud-gateway/:/app
-    networks:
-      - app-network
+#  cloud-gateway:
+#    build:
+#      context: ../cloud-gateway
+#      dockerfile: ./Dockerfile
+#    container_name: cloud-gateway
+#    restart: unless-stopped
+#    tty: true
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SERVICE_TAGS: dev
+#      SERVICE_NAME: cloud-gateway
+#    volumes:
+#      - ../cloud-gateway/:/app
+#    networks:
+#      - app-network
 
   eurekaserver:
     build:
@@ -116,6 +154,10 @@ services:
     environment:
       SERVICE_TAGS: dev
       SERVICE_NAME: service-registry
+      SPRING_APPLICATION_NAME: service-registry
+      SERVER_PORT: 8761
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: false
+      EUREKA_CLIENT_FETCH_REGISTRY: false
     volumes:
       - ../service-registry/:/app
     networks:

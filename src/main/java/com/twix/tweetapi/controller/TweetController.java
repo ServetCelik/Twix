@@ -17,7 +17,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tweet")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
+//@CrossOrigin("http://localhost:3000")
 public class TweetController {
     private final TweetService tweetService;
     @Autowired
