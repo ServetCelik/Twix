@@ -126,6 +126,18 @@ services:
     networks:
       - app-network
 
+  react-app:
+      build:
+        context: ../frontend
+        dockerfile: ./Dockerfile
+      container_name: react-app
+      restart: unless-stopped
+      tty: true
+      ports:
+        - "3000:80"
+      networks:
+        - app-network
+
 #  cloud-gateway:
 #    build:
 #      context: ../cloud-gateway

@@ -17,7 +17,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tweet")
 @RequiredArgsConstructor
-//@CrossOrigin("http://localhost:3000")
+//@CrossOrigin("http://react-app:80")
+@CrossOrigin(origins = "*")
 public class TweetController {
     private final TweetService tweetService;
     @Autowired
