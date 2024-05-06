@@ -39,7 +39,8 @@ public class TweetController {
 
     @PostMapping("/")
     public ResponseEntity<Long> newTweet(@RequestBody CreateTweetRequest tweetRequest) {
-        Optional<UserSharable> user = Optional.ofNullable(restTemplate.getForObject("http://user-api:8082/user/username/" + tweetRequest.getUserName(), UserSharable.class));
+//        Optional<UserSharable> user = Optional.ofNullable(restTemplate.getForObject("http://user-api:8082/user/username/" + tweetRequest.getUserName(), UserSharable.class));
+        Optional<UserSharable> user = Optional.ofNullable(restTemplate.getForObject("http://user-api-service:8082/user/username/" + tweetRequest.getUserName(), UserSharable.class));
 
         if (user.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(tweetService.newTweet(tweetRequest));
