@@ -11,6 +11,7 @@ public interface TweetService {
     Long newTweet(CreateTweetRequest tweet);
 
     List<TweetModal> getTweetsByUserName(String userName);
+    List<TweetModal> getTimeline(List<String> userNames);
 
     Long deleteTweet(Long tweetId);
 

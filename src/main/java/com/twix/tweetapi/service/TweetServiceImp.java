@@ -26,6 +26,11 @@ public class TweetServiceImp implements TweetService {
     }
 
     @Override
+    public List<TweetModal> getTimeline(List<String> userNames) {
+        return tweetRepository.findByUserNameIn(userNames);
+    }
+
+    @Override
     public Long newTweet(CreateTweetRequest tweet) {
         TweetModal savedTweet = TweetModal.builder()
                 .userName(tweet.getUserName())

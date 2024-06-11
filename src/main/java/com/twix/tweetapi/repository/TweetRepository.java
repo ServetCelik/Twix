@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface TweetRepository extends JpaRepository<TweetModal, Long> {
     List<TweetModal> findByUserName(String userName);
+    List<TweetModal> findByUserNameIn(List<String> names);
 }

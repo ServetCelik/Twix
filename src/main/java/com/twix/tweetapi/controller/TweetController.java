@@ -1,6 +1,7 @@
 package com.twix.tweetapi.controller;
 
 import com.twix.tweetapi.controller.modals.CreateTweetRequest;
+import com.twix.tweetapi.controller.modals.GetTimelineRequest;
 import com.twix.tweetapi.controller.modals.UserSharable;
 import com.twix.tweetapi.service.TweetService;
 import com.twix.tweetapi.service.modals.TweetModal;
@@ -31,16 +32,21 @@ public class TweetController {
         return ResponseEntity.ok(tweetService.getAllTweets());
     }
 
-    @GetMapping("/{userName}")
+    @GetMapping("/username/{userName}")
     public ResponseEntity<List<TweetModal>> getTweetsByUserName(@PathVariable String userName) {
 
         return ResponseEntity.ok(tweetService.getTweetsByUserName(userName));
+    }
+    @PostMapping("/timeline")
+    public ResponseEntity<List<TweetModal>> getTimeline(@RequestBody GetTimelineRequest timelineRequest) {
+
+        return ResponseEntity.ok(tweetService.getTimeline(timelineRequest.userNames));
     }
 
     @PostMapping("/")
     public ResponseEntity<Long> newTweet(@RequestBody CreateTweetRequest tweetRequest) {
 //        Optional<UserSharable> user = Optional.ofNullable(restTemplate.getForObject("http://user-api:8082/user/username/" + tweetRequest.getUserName(), UserSharable.class));
-        Optional<UserSharable> user = Optional.ofNullable(restTemplate.getForObject("http://user-api-service:8082/user/username/" + tweetRequest.getUserName(), UserSharable.class));
+        Optional<UserSharable> user = Optional.ofNullable(restTemplate.getForObject("http://user-api:8082/user/username/" + tweetRequest.getUserName(), UserSharable.class));
 
         if (user.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(tweetService.newTweet(tweetRequest));
