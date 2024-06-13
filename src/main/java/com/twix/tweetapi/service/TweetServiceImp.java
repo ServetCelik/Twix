@@ -6,6 +6,7 @@ import com.twix.tweetapi.service.modals.TweetModal;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -16,18 +17,24 @@ public class TweetServiceImp implements TweetService {
 
     @Override
     public List<TweetModal> getAllTweets() {
-        return tweetRepository.findAll();
+        List<TweetModal> tweets = tweetRepository.findAll();
+        Collections.reverse(tweets);
+        return tweets;
     }
 
     @Override
     public List<TweetModal> getTweetsByUserName(String userName) {
 
-        return tweetRepository.findByUserName(userName);
+        List<TweetModal> tweets = tweetRepository.findByUserName(userName);
+        Collections.reverse(tweets);
+        return tweets;
     }
 
     @Override
     public List<TweetModal> getTimeline(List<String> userNames) {
-        return tweetRepository.findByUserNameIn(userNames);
+        List<TweetModal> tweets = tweetRepository.findByUserNameIn(userNames);
+        Collections.reverse(tweets);
+        return tweets;
     }
 
     @Override
@@ -52,21 +59,3 @@ public class TweetServiceImp implements TweetService {
         return tweetRepository.save(tweet).getId();
     }
 }
-
-
-//@Override
-//    public List<TweetModal> getTweets() {
-//        return List.of(
-//                new TweetModal(1L, 101L, List.of(
-//                        new TweetVersionModal(1L, 1L, "First tweet content", LocalDateTime.now()),
-//                        new TweetVersionModal(2L, 1L, "Updated content of first tweet", LocalDateTime.now().plusMinutes(5))
-//                )),
-//                new TweetModal(2L, 102L, List.of(
-//                        new TweetVersionModal(3L, 2L, "Second tweet content", LocalDateTime.now()),
-//                        new TweetVersionModal(4L, 2L, "Updated content of second tweet", LocalDateTime.now().plusMinutes(10))
-//                )),
-//                new TweetModal(3L, 103L, List.of(
-//                        new TweetVersionModal(5L, 3L, "Third tweet content", LocalDateTime.now()),
-//                        new TweetVersionModal(6L, 3L, "Updated content of third tweet", LocalDateTime.now().plusMinutes(15))
-//                )));
-//    }
