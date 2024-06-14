@@ -130,18 +130,24 @@ services:
       build:
         context: ../frontend
         dockerfile: ./Dockerfile
+        args:
+          - REACT_APP_API_USER_URL=http://localhost:8082
+          - REACT_APP_API_TWEET_URL=http://localhost:8081
       container_name: react-app
       restart: unless-stopped
       tty: true
       ports:
         - "80:80"
+      environment:
+        - REACT_APP_API_USER_URL=http://localhost:8082
+        - REACT_APP_API_TWEET_URL=http://localhost:8081
       networks:
         - app-network
-  auth-api:
+  auth-api-service:
     build:
       context: ../authapi
       dockerfile: ./Dockerfile
-    container_name: auth-api
+    container_name: auth-api-service
     restart: unless-stopped
     tty: true
     ports:
