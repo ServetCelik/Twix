@@ -14,42 +14,23 @@ services:
     networks:
       - app-network
 
-#  #MySQL database for tweets
-#  dbtweet:
-#    platform: linux/amd64
-#    image: mysql
-#    container_name: dbtweet
-#    restart: unless-stopped
-#    command: --default-authentication-plugin=mysql_native_password
-#    tty: true
-#    ports:
-#      - "3307:3306"
-#    environment:
-#      MYSQL_DATABASE: tweetdatabase
-#      MYSQL_ROOT_PASSWORD: MySecurePass
-#      SERVICE_TAGS: dev
-#      SERVICE_NAME: mysql
-#    networks:
-#      - app-network
-#
-#  #MySQL database for users
-#  dbuser:
-#    platform: linux/amd64
-#    image: mysql
-#    container_name: dbuser
-#    restart: unless-stopped
-#    command: --default-authentication-plugin=mysql_native_password
-#    tty: true
-#    ports:
-#      - "3308:3306"
-#    environment:
-#      MYSQL_HOST: mysql
-#      MYSQL_DATABASE: userdatabase
-#      MYSQL_ROOT_PASSWORD: MySecurePass
-#      SERVICE_TAGS: dev
-#      SERVICE_NAME: mysql
-#    networks:
-#      - app-network
+  #MySQL database for tweets
+  dbtweet:
+    platform: linux/amd64
+    image: mysql
+    container_name: dbtweet
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    tty: true
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: tweetdatabase
+      MYSQL_ROOT_PASSWORD: MySecurePass
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - app-network
 
 
   #Backend Service for tweetApi
@@ -72,18 +53,6 @@ services:
       SPRING_RABBITMQ_USERNAME: user
       SPRING_RABBITMQ_PASSWORD: mypass
       RABBITMQ_EXCHANGE: user_exchange
-#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-#      SPRING_DATASOURCE_URL: jdbc:mysql://dbtweet:3306/tweetdatabase
-#      SPRING_DATASOURCE_USERNAME: root
-#      SPRING_DATASOURCE_PASSWORD: MySecurePass
-#      SPRING_JPA_OPEN_IN_VIEW: false
-#      SPRING_JPA_SHOW_SQL: true
-#      SPRING_JPA_PROPERTIES_HIBERNATE_CONNECTION_AUTOCOMMIT: false
-#      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
-#      EUREKA_CLIENT_REGISTER_WITH_EUREKA: true
-#      EUREKA_CLIENT_FETCH_REGISTRY: true
-#      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eurekaserver:8761/eureka/
-#      EUREKA_INSTANCE_PREFER_IP_ADDRESS: true
     volumes:
       - ./:/app
     networks:
@@ -109,18 +78,6 @@ services:
       SPRING_RABBITMQ_USERNAME: user
       SPRING_RABBITMQ_PASSWORD: mypass
       RABBITMQ_EXCHANGE: user_exchange
-#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-#      SPRING_DATASOURCE_URL: jdbc:mysql://dbuser:3306/userdatabase
-#      SPRING_DATASOURCE_USERNAME: root
-#      SPRING_DATASOURCE_PASSWORD: MySecurePass
-#      SPRING_JPA_OPEN_IN_VIEW: false
-#      SPRING_JPA_SHOW_SQL: true
-#      SPRING_JPA_PROPERTIES_HIBERNATE_CONNECTION_AUTOCOMMIT: false
-#      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
-#      EUREKA_CLIENT_REGISTER_WITH_EUREKA: true
-#      EUREKA_CLIENT_FETCH_REGISTRY: true
-#      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eurekaserver:8761/eureka/
-#      EUREKA_INSTANCE_PREFER_IP_ADDRESS: true
     volumes:
       - ../userapi/:/app
     networks:
@@ -157,54 +114,4 @@ services:
 networks:
   app-network:
     driver: bridge
-
-
-
-    #      ports:
-    #        - "3000:80"
-    #      environment:
-    #        REACT_APP_API_BASE_URL_TWEET: http://localhost:8083
-    #        REACT_APP_API_BASE_URL_USER: http://localhost:8084
-
-    #        - REACT_APP_API_BASE_URL_TWEET= http://tweet-api:8081
-    #        - REACT_APP_API_BASE_URL_USER= http://user-api:8082
-
-#  cloud-gateway:
-#    build:
-#      context: ../cloud-gateway
-#      dockerfile: ./Dockerfile
-#    container_name: cloud-gateway
-#    restart: unless-stopped
-#    tty: true
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      SERVICE_TAGS: dev
-#      SERVICE_NAME: cloud-gateway
-#    volumes:
-#      - ../cloud-gateway/:/app
-#    networks:
-#      - app-network
-
-#  eurekaserver:
-#    build:
-#      context: ../service-registry
-#      dockerfile: ./Dockerfile
-#    container_name: service-registry
-#    restart: unless-stopped
-#    tty: true
-#    ports:
-#      - "8761:8761"
-#    environment:
-#      SERVICE_TAGS: dev
-#      SERVICE_NAME: service-registry
-#      SPRING_APPLICATION_NAME: service-registry
-#      SERVER_PORT: 8761
-#      EUREKA_CLIENT_REGISTER_WITH_EUREKA: false
-#      EUREKA_CLIENT_FETCH_REGISTRY: false
-#    volumes:
-#      - ../service-registry/:/app
-#    networks:
-#      - app-network
-#Docker Networks
 
