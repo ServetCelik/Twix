@@ -28,7 +28,7 @@ public class TweetController {
     @GetMapping("/test")
     public ResponseEntity<String> getTestString() {
 
-        return ResponseEntity.ok("3");
+        return ResponseEntity.ok("4");
     }
 
 
