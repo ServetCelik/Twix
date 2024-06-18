@@ -35,3 +35,23 @@ jobs:
         file: Dockerfile.build
         tags: servetc/twix:latest
 
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Install kubectl
+      run: |
+        curl -LO "https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl"
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/local/bin/kubectl
+
+    - name: Get AKS credentials
+      run: |
+        az aks get-credentials --resource-group twix --name twixCluster --overwrite-existing
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl set image deployment/tweet-api tweet-api=servetc/twix:latest --namespace=twix
+        kubectl apply -f ./tweet-api.yaml --namespace=twix
+

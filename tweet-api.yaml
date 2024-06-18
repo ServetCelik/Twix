@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: tweet-api-deployment
+  namespace: twix
+  labels:
+    app: tweet-api
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: tweet-api
+
+  template:
+    metadata:
+      labels:
+        app: tweet-api
+
+    spec:
+      containers:
+      - name: tweet-api
+        image: servetc/twix:latest
+        # imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
+
+        ports:
+          - containerPort: 8081
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 300m
+
+        env:
+        - name: SERVICE_TAGS
+          value: "dev"
+        - name: SERVICE_NAME
+          value: "backend"
+        - name: SPRING_APPLICATION_NAME
+          value: "tweet-api"
+        - name: SERVER_PORT
+          value: "8081"
+        - name: SPRING_RABBITMQ_HOST
+          value: "rabbitmq"
+        - name: SPRING_RABBITMQ_PORT
+          value: "5672"
+        - name: SPRING_RABBITMQ_USERNAME
+          value: "user"
+        - name: SPRING_RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: all-secrets
+              key: RABBITMQ_DEFAULT_PASS_TWEETAPI
+        - name: RABBITMQ_EXCHANGE
+          value: "user_exchange"
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: "update"
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://twixdb.mysql.database.azure.com:3306/mydb?useSSL=true"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "twixdb"
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: all-secrets
+              key: MYSQL_ROOT_PASSWORD_TWEETAPI
+        - name: SPRING_JPA_OPEN_IN_VIEW
+          value: "false"
+        - name: SPRING_JPA_SHOW_SQL
+          value: "true"
+        - name: SPRING_JPA_PROPERTIES_HIBERNATE_CONNECTION_AUTOCOMMIT
+          value: "false"
+        - name: SPRING_FLYWAY_BASELINE_ON_MIGRATE
+          value: "true"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tweet-api-service
+spec:
+  selector:
+    app: tweet-api
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP

@@ -25,6 +25,12 @@ public class TweetController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @GetMapping("/test")
+    public ResponseEntity<String> getTestString() {
+
+        return ResponseEntity.ok("3");
+    }
+
 
     @GetMapping("/")
     public ResponseEntity<List<TweetModal>> getAllTweets() {
