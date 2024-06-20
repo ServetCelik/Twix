@@ -57,5 +57,7 @@ jobs:
       run: |
         kubectl apply -f ./tweet-api.yaml --namespace=twix
         kubectl set image deployment/tweet-api-deployment tweet-api=servetc/twix:latest --namespace=twix
+        kubectl rollout restart deployment/tweet-api-deployment --namespace=twix
+        kubectl rollout status deployment/tweet-api-deployment --namespace=twix
     
 
