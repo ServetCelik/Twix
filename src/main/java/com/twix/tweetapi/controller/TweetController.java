@@ -2,7 +2,7 @@ package com.twix.tweetapi.controller;
 
 import com.twix.tweetapi.controller.modals.CreateTweetRequest;
 import com.twix.tweetapi.controller.modals.GetTimelineRequest;
-import com.twix.tweetapi.controller.modals.UserSharable;
+import com.twix.tweetapi.service.TokenService;
 import com.twix.tweetapi.service.TweetService;
 import com.twix.tweetapi.service.modals.TweetModal;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/tweet")
 @RequiredArgsConstructor
-//@CrossOrigin("http://react-app:80")
 @CrossOrigin(origins = "*")
 public class TweetController {
     private final TweetService tweetService;
+    private final TokenService tokenService;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -39,10 +38,14 @@ public class TweetController {
     }
 
     @GetMapping("/username/{userName}")
-    public ResponseEntity<List<TweetModal>> getTweetsByUserName(@PathVariable String userName) {
-
-        return ResponseEntity.ok(tweetService.getTweetsByUserName(userName));
+    public ResponseEntity<List<TweetModal>> getTweetsByUserName(@PathVariable String userName, @RequestHeader("Authorization") String token) {
+        if (tokenService.isAuthorized(token,userName)){
+            return ResponseEntity.ok(tweetService.getTweetsByUserName(userName));
+        }else{
+            return ResponseEntity.status(403).build();
+        }
     }
+
     @PostMapping("/timeline")
     public ResponseEntity<List<TweetModal>> getTimeline(@RequestBody GetTimelineRequest timelineRequest) {
 
@@ -50,32 +53,34 @@ public class TweetController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Long> newTweet(@RequestBody CreateTweetRequest tweetRequest) {
-        Optional<UserSharable> user = Optional.ofNullable(restTemplate.getForObject("http://user-api-service:8082/user/username/" + tweetRequest.getUserName(), UserSharable.class));
+    public ResponseEntity<Long> newTweet(@RequestBody CreateTweetRequest tweetRequest, @RequestHeader("Authorization") String token) {
 
-        if (user.isPresent()){
-            return ResponseEntity.status(HttpStatus.CREATED).body(tweetService.newTweet(tweetRequest));
+        if (tokenService.isAuthorized(token,tweetRequest.getUserName())){
+                return ResponseEntity.status(HttpStatus.CREATED).body(tweetService.newTweet(tweetRequest));
+        }else{
+            return ResponseEntity.status(403).build();
         }
-        return ResponseEntity.badRequest().body(-1L);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteTweet(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(tweetService.deleteTweet(id));
+    public ResponseEntity<Long> deleteTweet(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        if (tokenService.isAuthorized(token,id)){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(tweetService.deleteTweet(id));
+        }else{
+            return ResponseEntity.status(403).build();
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Long> updateTweet(@PathVariable("id") long id
-            , @RequestBody TweetModal userEntity) {
-        return ResponseEntity.status(HttpStatus.OK).
-                body(tweetService.updateTweet(id, userEntity));
+            , @RequestBody TweetModal userEntity, @RequestHeader("Authorization") String token) {
+        if (tokenService.isAuthorized(token,id)){
+            return ResponseEntity.status(HttpStatus.OK).
+                    body(tweetService.updateTweet(id, userEntity));
+        }else{
+            return ResponseEntity.status(403).build();
+        }
     }
 
 }
-
-
-//        rabbitTemplate.convertAndSend("answers", "#", null, m -> {
-//            m.getMessageProperties().getHeaders().put("MessageType", "CreateAnswerEvent");
-//            return m;
-//        });
