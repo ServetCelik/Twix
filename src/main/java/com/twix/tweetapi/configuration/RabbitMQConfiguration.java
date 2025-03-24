@@ -30,41 +30,5 @@ public class RabbitMQConfiguration {
     }
 }
 
-//    @Value("${rabbitmq.exchange.tweet.created}")
-//    private String exchange;
-//    @Value("rabbitmq.queue.name")
-//    private String queue;
-//    @Value("rabbitmq.routing.key")
-//    private String routingKey;
-//
-//    @Bean
-//    Queue queue(){
-//        return new Queue(queue, false);
-//    }
-//
-//    @Bean
-//    public TopicExchange exchange (){
-//        return new TopicExchange(exchange);
-//    }
-//
-//    @Bean
-//    public Binding binding(){
-//        return BindingBuilder
-//                .bind(queue())
-//                .to(exchange())
-//                .with(routingKey);
-//    }
-//
-//    @Bean
-//    MessageConverter messageConverter(){
-//        return new Jackson2JsonMessageConverter();
-//    }
-//
-//    @Bean
-//    RabbitTemplate rabbitTemplate(ConnectionFactory factory){
-//        RabbitTemplate rabbitTemplate = new RabbitTemplate(factory);
-//        rabbitTemplate.setMessageConverter(messageConverter());
-//        return rabbitTemplate;
-//    }
 
 

@@ -37,10 +37,3 @@ public class Receiver {
         return gson.fromJson(userString, UserSharable.class);
     }
 }
-
-
-//    @RabbitListener(queues = "userUpdated")
-//    private void registerProductInventory(String message) {
-//        //do sth with your service
-//        log.info("new message:  {}", message);
-//    }
